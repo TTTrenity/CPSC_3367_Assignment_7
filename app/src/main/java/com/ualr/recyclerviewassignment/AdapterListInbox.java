@@ -16,6 +16,7 @@ public class AdapterListInbox extends RecyclerView.Adapter<AdapterListInbox.View
 
     private Context ctx;
     private List<Inbox> items;
+
     int currentItemSelected;
 
     public AdapterListInbox(Context mContext, List<Inbox> items) {
@@ -58,7 +59,31 @@ public class AdapterListInbox extends RecyclerView.Adapter<AdapterListInbox.View
 
     public void addNewItem() {
         this.items.add(0, DataGenerator.getRandomInboxItem(this.ctx));
+        currentItemSelected = -1;
         notifyItemInserted(0);
+    }
+
+    public void addNewItem(Inbox item) {
+        this.items.add(0, item);
+        currentItemSelected = -1;
+        notifyItemInserted(0);
+    }
+
+    public void deleteItem() {
+        if (currentItemSelected != -1) {
+            this.items.remove(currentItemSelected);
+            notifyItemRemoved(currentItemSelected);
+            currentItemSelected = -1;
+        }
+    }
+
+    public void refreshRecycler() {
+        currentItemSelected = -1;
+        notifyDataSetChanged();
+    }
+
+    public Inbox getItem() {
+        return this.items.get(currentItemSelected);
     }
 
     @Override
@@ -98,17 +123,6 @@ public class AdapterListInbox extends RecyclerView.Adapter<AdapterListInbox.View
                         items.get(getBindingAdapterPosition()).toggleSelection();
                         notifyItemChanged(getBindingAdapterPosition());
                         currentItemSelected = getBindingAdapterPosition();
-                    }
-                }
-            });
-
-            lyt_thumbnail.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (getBindingAdapterPosition() == currentItemSelected) {
-                        items.remove(getBindingAdapterPosition());
-                        notifyItemRemoved(getBindingAdapterPosition());
-                        currentItemSelected = -1;
                     }
                 }
             });
